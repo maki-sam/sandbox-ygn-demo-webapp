@@ -1,0 +1,58 @@
+# ============================================================
+#   Sandbox YGN — DevOps Foundational · Session 3.2
+#   Docker Compose — Full Stack (Node.js App + Redis)
+# ============================================================
+services:
+
+  # ── Service 1: Web Application
+  webapp:
+    build:
+      context: .             # Build from the Dockerfile in this directory
+      dockerfile: Dockerfile
+    container_name: sandbox-ygn-webapp
+    image: sandbox-ygn/webapp:v1
+    ports:
+      - "3000:3000"          # host_port:container_port → visit http://localhost:3000
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_HOST=redis     # Uses the service name as hostname (Docker DNS)
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy   # Wait until Redis passes its health check
+    networks:
+      - sandbox-net
+    restart: unless-stopped          # Auto-restart if container crashes
+    volumes:
+      - ./logs:/app/logs             # Optional: persist log files to host
+
+  # ── Service 2: Redis Cache / Data Store
+  
+  redis:
+    image: redis:7-alpine            # Official Redis image (Alpine = small)
+    container_name: sandbox-ygn-redis
+    ports:
+      - "6379:6379"          # Expose Redis for direct inspection with redis-cli
+    networks:
+      - sandbox-net
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data             # Named volume → data survives container restart
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ── Networks ──────────────────────────────────────────────────
+# Custom bridge network so containers can reach each other by service name.
+# Isolated from other Docker containers on the host.
+networks:
+  sandbox-net:
+    driver: bridge
+
+# ── Volumes ───────────────────────────────────────────────────
+# Named volumes are managed by Docker and persist across container restarts.
+volumes:
+  redis-data:

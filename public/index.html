@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sandbox YGN — Docker Lab</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1a2e; color: #e2e8f0; min-height: 100vh; }
+
+    header {
+      background: #1a3a5c;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid #2d5a8a;
+    }
+
+    .logo {
+      width: 40px; height: 40px;
+      background: #1a6fdb;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+
+    header h1 { font-size: 18px; font-weight: 700; color: #fff; }
+    header p  { font-size: 12px; color: #64b5f6; }
+
+    .badge {
+      margin-left: auto;
+      background: #0d2540;
+      color: #64b5f6;
+      font-size: 11px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #1a6fdb;
+    }
+
+    main { padding: 32px; max-width: 900px; margin: 0 auto; }
+
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #64b5f6; margin-bottom: 16px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 32px; }
+
+    .card {
+      background: #1a2d47;
+      border: 1px solid #2d5a8a;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .card-label { font-size: 11px; color: #64b5f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .card-val { font-size: 22px; font-weight: 700; color: #fff; font-family: 'Courier New', monospace; }
+    .card-sub { font-size: 12px; color: #90a8c8; margin-top: 4px; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
+
+    button {
+      padding: 10px 20px;
+      border-radius: 7px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    button:hover { opacity: 0.85; }
+    .btn-primary { background: #1a6fdb; color: #fff; }
+    .btn-danger  { background: #c0392b; color: #fff; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-info    { background: #1a3a5c; color: #64b5f6; border: 1px solid #1a6fdb; }
+
+    .response-box {
+      background: #0d1117;
+      border: 1px solid #2d5a8a;
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      min-height: 80px;
+      color: #a0cfff;
+      white-space: pre-wrap;
+      margin-bottom: 32px;
+    }
+
+    .msg-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 7px;
+      border: 1px solid #2d5a8a;
+      background: #1a2d47;
+      color: #e2e8f0;
+      font-size: 13px;
+    }
+
+    .messages-list { display: flex; flex-direction: column; gap: 8px; }
+    .msg-item {
+      background: #1a2d47;
+      border-left: 3px solid #1a6fdb;
+      padding: 10px 14px;
+      border-radius: 5px;
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      color: #4a6a8a;
+      border-top: 1px solid #1a2d47;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🐳</div>
+    <div>
+      <h1>Sandbox YGN — DevOps Lab App</h1>
+      <p>Session 3.2 · Docker Fundamentals</p>
+    </div>
+    <div class="badge" id="hostname-badge">Loading...</div>
+  </header>
+
+  <main>
+    <h2>Container Info</h2>
+    <div class="grid" id="info-grid">
+      <div class="card"><div class="card-label">Container ID</div><div class="card-val" id="c-hostname">—</div></div>
+      <div class="card"><div class="card-label">Environment</div><div class="card-val" id="c-env">—</div></div>
+      <div class="card"><div class="card-label">Node Version</div><div class="card-val" id="c-node">—</div></div>
+      <div class="card"><div class="card-label">Platform</div><div class="card-val" id="c-platform">—</div></div>
+    </div>
+
+    <h2>Visit Counter (Redis)</h2>
+    <div class="actions">
+      <button class="btn-primary" onclick="incrementCounter()">+ Increment Counter</button>
+      <button class="btn-danger" onclick="resetCounter()">Reset Counter</button>
+    </div>
+    <div class="response-box" id="counter-output">Click a button to interact with Redis...</div>
+
+    <h2>Message Store (Redis List)</h2>
+    <div class="msg-input">
+      <input type="text" id="msg-text" placeholder="Type a message and store in Redis..." />
+      <button class="btn-success" onclick="sendMessage()">Store</button>
+      <button class="btn-info" onclick="loadMessages()">Load All</button>
+    </div>
+    <div class="messages-list" id="messages-list"></div>
+  </main>
+
+  <footer>Sandbox YGN · DevOps Foundational · Docker Fundamentals Lab</footer>
+
+  <script>
+    async function fetchInfo() {
+      const res = await fetch('/info');
+      const d   = await res.json();
+      document.getElementById('c-hostname').textContent  = d.hostname;
+      document.getElementById('c-env').textContent       = d.environment;
+      document.getElementById('c-node').textContent      = d.nodeVersion;
+      document.getElementById('c-platform').textContent  = d.platform;
+      document.getElementById('hostname-badge').textContent = '🟢 ' + d.hostname;
+    }
+
+    async function incrementCounter() {
+      const res = await fetch('/counter');
+      const d   = await res.json();
+      document.getElementById('counter-output').textContent =
+        JSON.stringify(d, null, 2);
+    }
+
+    async function resetCounter() {
+      const res = await fetch('/counter', { method: 'DELETE' });
+      const d   = await res.json();
+      document.getElementById('counter-output').textContent =
+        JSON.stringify(d, null, 2);
+    }
+
+    async function sendMessage() {
+      const text = document.getElementById('msg-text').value.trim();
+      if (!text) return alert('Enter a message first.');
+      await fetch('/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      document.getElementById('msg-text').value = '';
+      await loadMessages();
+    }
+
+    async function loadMessages() {
+      const res = await fetch('/messages');
+      const d   = await res.json();
+      const el  = document.getElementById('messages-list');
+      el.innerHTML = d.messages.length
+        ? d.messages.map(m => `<div class="msg-item">${m}</div>`).join('')
+        : '<div style="color:#4a6a8a;font-size:13px">No messages stored yet.</div>';
+    }
+
+    fetchInfo();
+    loadMessages();
+  </script>
+</body>
+</html>

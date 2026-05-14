@@ -1,0 +1,11 @@
+# Sandbox YGN — .dockerignore
+# Keeps node_modules and other unnecessary files out of the Docker build context.
+
+node_modules
+npm-debug.log
+.git
+.gitignore
+*.md
+logs
+.env
+.DS_Store

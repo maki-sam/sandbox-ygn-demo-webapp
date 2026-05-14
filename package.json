@@ -1,0 +1,22 @@
+{
+  "name": "sandbox-ygn-devops-app",
+  "version": "1.0.0",
+  "description": "Sample Node.js app for Sandbox YGN — Docker Fundamentals Lab (Session 3.2)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "redis": "^4.6.10"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": "Sandbox YGN — DevOps Foundational",
+  "license": "MIT"
+}
