@@ -11,14 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     services:
       redis:
-        image: redis:7-alpine        # Official Redis image (small)
+        image: redis:7-alpine
         ports:
-          - 6379:6379                # Maps container port 6379 to runner's 6379
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+    steps:
       - name: "⬇️ Checkout code"
         uses: actions/checkout@v4
       - name: "🟢 Set up Node.js 20"
@@ -31,10 +33,10 @@ jobs:
 
       - name: "🧪 Start app and test all endpoints"
         env:
-          REDIS_HOST: localhost       # Where to find Redis (mapped from service)
-          REDIS_PORT: 6379            # Redis default port
-          NODE_ENV: test              # Tells our app it's in test mode
-          PORT: 3000                  # Port our app listens on
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          NODE_ENV: test
+          PORT: 3000
         run: |
           node app.js &
           APP_PID=$!
@@ -99,12 +101,10 @@ jobs:
             exit 1
           fi
 
-          # ── All tests passed ──────────────────────────────
           echo ""
           echo "══════════════════════════════════════"
           echo "🎉 ALL TESTS PASSED — safe to merge!"
           echo "══════════════════════════════════════"
 
-          # Clean up: kill the app process
           kill $APP_PID 2>/dev/null
           echo "App process stopped."
