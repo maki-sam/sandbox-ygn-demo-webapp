@@ -31,8 +31,8 @@ app.use(express.static('public'));
 
 // Health check – useful for Docker HEALTHCHECK and K8s probes
 app.get('/health', (req, res) => {
-  // res.json({ status: 'ok', uptime: process.uptime().toFixed(2) + 's' });
-  res.status(500).json({ status: 'error', message: 'App is unhealthy!' });
+  res.json({ status: 'ok', uptime: process.uptime().toFixed(2) + 's' });
+  // res.status(500).json({ status: 'error', message: 'App is unhealthy!' });
 
 });
 
