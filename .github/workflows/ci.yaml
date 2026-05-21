@@ -34,7 +34,7 @@ jobs:
       - name: "🧪 Start app and test all endpoints"
         env:
           REDIS_HOST: localhost       # Where to find Redis (mapped from service)
-          REDIS_PORT: 6379            # Redis default port
+          #REDIS_PORT: 6379            # Redis default port
           NODE_ENV: test              # Tells our app it's in test mode
           PORT: 3000
         run: |
