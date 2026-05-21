@@ -41,3 +41,5 @@ jobs:
           node app.js &
           sleep 3
           curl --silent --fail http://localhost:3000/health
+      - name: "✅ All tests passed!"
+        run: echo "App is healthy and all tests passed!"
