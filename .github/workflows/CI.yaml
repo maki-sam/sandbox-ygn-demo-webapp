@@ -80,6 +80,6 @@ jobs:
 
       - name: "Verify Docker Image on Docker Hub"
         run: |
-        docker pull ${{ env.IMAGE_NAME }}:latest
-        echo "Docker image pulled successfully from Docker Hub!"
+          docker pull ${{ env.IMAGE_NAME }}:latest
+          echo "Docker image pulled successfully from Docker Hub!"
 
