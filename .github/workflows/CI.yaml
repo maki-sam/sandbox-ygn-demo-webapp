@@ -70,10 +70,10 @@ jobs:
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v7
-          with:
-            push: true
-            context: .
-            tags: ${{ env.IMAGE_NAME }}:latest
+        with:
+          push: true
+          context: .
+          tags: ${{ env.IMAGE_NAME }}:latest
 
       - name: "Docker Hub Push Success Message"
         run: echo "Docker image pushed to Docker Hub successfully!"
