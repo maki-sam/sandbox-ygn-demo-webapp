@@ -1,0 +1,51 @@
+name: "Build and Tesing our WebApp Before Release"
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  testing-app-with-redis:
+    name: "Testing our WebApp with Redis"
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v6
+
+      - name: "Set up NodeJS on Runner"
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: "Install Dependencies"
+        run: npm install
+
+      - name: "Start Application and Test with Redis"
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          NODE_ENV: production
+          PORT: 3000
+
+        run: | 
+          node app.js &
+          sleep 5 
+          curl --silent --fail http://localhost:3000/health
+
+      - name: "Testing Pass Message"
+        run: echo "All tests passed successfully!"
+
+      - name: "Testing Pass Message2"
+        run: echo "All tests passed successfully!2"
