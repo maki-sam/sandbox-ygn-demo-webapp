@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 // ── Redis client ─────────────────────────────────────────────
 const redisHost = process.env.REDIS_HOST || 'localhost';
-const redisPort = process.env.REDIS_PORT || 6379;
+const redisPort = process.env.REDIS_PORT || 63799;
 
 const client = redis.createClient({
   socket: { host: redisHost, port: redisPort }
@@ -31,7 +31,7 @@ app.use(express.static('public'));
 
 // Health check – useful for Docker HEALTHCHECK and K8s probes
 app.get('/health', (req, res) => {
-  res.json({ status: 'stop', uptime: process.uptime().toFixed(2) + 's' });
+  res.json({ status: 'ok', uptime: process.uptime().toFixed(2) + 's' });
 });
 
 // App info – demonstrates environment variables and container metadata
