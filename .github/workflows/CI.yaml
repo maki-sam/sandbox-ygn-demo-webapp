@@ -52,7 +52,7 @@ jobs:
   
   build-and-deploy:
     name: "Build Docker Image & Push to Docker Hub"
-    depends-on: testing-app-with-redis
+    needs: testing-app-with-redis
     runs-on: ubuntu-latest
 
     steps:
@@ -68,17 +68,15 @@ jobs:
 #      - name: "Build and Push Docker Image"
 #        uses: docker/setup-buildx-action@v4
 
-      - 
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v7
+          with:
+            push: true
+            context: .
+            tags: ${{ env.IMAGE_NAME }}:latest
 
-      -  name: Push to Docker Hub
-         ses: docker/build-push-action@v7
-            with:
-              push: true
-              context: .
-              tags: ${{ env.IMAGE_NAME }}
-
-      -  name: "Docker Hub Push Success Message"
-         run: echo "Docker image pushed to Docker Hub successfully!"
+      - name: "Docker Hub Push Success Message"
+        run: echo "Docker image pushed to Docker Hub successfully!"
 
       - name: "Verify Docker Image on Docker Hub"
         run: |
